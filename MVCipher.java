@@ -39,7 +39,7 @@ public class MVCipher {
     * file operations, and key input.
     */
    public void runCipher() {
-      System.out.println("\nWelcome to the MV Cipher machine!\n");
+      System.out.println("\n Welcome to the MV Cipher machine!\n");
       this.key = this.getKeyInput();
 
       // Determine if the user wants to encrypt or decrypt
