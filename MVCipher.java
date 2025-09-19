@@ -9,12 +9,20 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class MVCipher {
-   private String key = "";
-   private int index = 0;
-   private final boolean IS_DEBUG_MODE = false;
-   private static final int ALPHABET_SIZE = 26;
-   private static final int ASCII_UPPER_A = 65;
-   private static final int KEY_MIN_LENGTH = 3;
+   private String key; // The encryption/decryption key
+   private int index = 0; // Current index in the key for character shifting
+   private final boolean IS_DEBUG_MODE; // Flag for debug mode
+   private final int ALPHABET_SIZE; // Number of letters in the alphabet
+   private final int ASCII_UPPER_A; // ASCII value of 'A'
+   private final int KEY_MIN_LENGTH; // Minimum length for the key
+
+   public MVCipher() {
+      key = ""; // Initialize key to an empty string
+      IS_DEBUG_MODE = false; // Set debug mode to false
+      ALPHABET_SIZE = 26; // There are 26 letters in the English alphabet
+      ASCII_UPPER_A = 65; // ASCII value for 'A'
+      KEY_MIN_LENGTH = 3; // Minimum key length is 3 characters
+   }
 
    /**
     * Main method to run the MVCipher program.
@@ -31,7 +39,7 @@ public class MVCipher {
     * file operations, and key input.
     */
    public void runCipher() {
-      System.out.println("\n Welcome to the MV Cipher machine!\n");
+      System.out.println("\nWelcome to the MV Cipher machine!\n");
       this.key = this.getKeyInput();
 
       if (this.IS_DEBUG_MODE) {
@@ -53,10 +61,10 @@ public class MVCipher {
          System.out.print("decrypt");
       }
 
-      String inputFileName = Prompt.getString("");
+      String inFileName = Prompt.getString("");
       String outputFileName = Prompt.getString("Name of output file");
 
-      try (Scanner fileScanner = FileUtils.openToRead(inputFileName);
+      try (Scanner fileScanner = FileUtils.openToRead(inFileName);
             PrintWriter fileWriter = FileUtils.openToWrite(outputFileName)) {
 
          while (fileScanner.hasNext()) {
@@ -68,10 +76,10 @@ public class MVCipher {
                char processedCharacter = originalCharacter;
 
                if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
-                  processedCharacter = this.getEncryptedDecryptedLowerCaseCharacter(
+                  processedCharacter = this.getEncryptDecryptLowerCase(
                         originalCharacter, isEncrypting);
                } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
-                  processedCharacter = this.getEncryptedDecryptedUpperCaseCharacter(
+                  processedCharacter = this.getEncryptDecryptUpperCase(
                         originalCharacter, isEncrypting);
                }
 
@@ -152,7 +160,7 @@ public class MVCipher {
     *                  (false).
     * @return The encrypted or decrypted lowercase character.
     */
-   public char getEncryptedDecryptedLowerCaseCharacter(char inputChar, boolean isEncrypt) {
+   public char getEncryptDecryptLowerCase(char inputChar, boolean isEncrypt) {
       char keyCharacter = this.key.charAt(this.index);
       this.index = (this.index + 1) % this.key.length();
       int shiftAmount = keyCharacter - ASCII_UPPER_A + 1;
@@ -185,7 +193,7 @@ public class MVCipher {
     *                  (false).
     * @return The encrypted or decrypted uppercase character.
     */
-   public char getEncryptedDecryptedUpperCaseCharacter(char inputChar, boolean isEncrypt) {
+   public char getEncryptDecryptUpperCase(char inputChar, boolean isEncrypt) {
       char keyCharacter = this.key.charAt(this.index);
       this.index = (this.index + 1) % this.key.length();
       int shiftAmount = keyCharacter - ASCII_UPPER_A + 1;
