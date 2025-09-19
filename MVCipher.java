@@ -5,6 +5,8 @@
  * @author Aarav Goyal
  * @since September 15, 2025
  */
+
+// Import for writing to files
 import java.io.PrintWriter;
 import java.util.Scanner;
 
@@ -42,10 +44,12 @@ public class MVCipher {
       System.out.println("\nWelcome to the MV Cipher machine!\n");
       this.key = this.getKeyInput();
 
+      // If debug mode is on, print the key
       if (this.IS_DEBUG_MODE) {
          System.out.println("The key is " + this.key);
       }
 
+      // Determine if the user wants to encrypt or decrypt
       boolean isEncrypting = true;
       int operationChoice = Prompt.getInt("\nEncrypt or decrypt?", 1, 2);
 
@@ -55,6 +59,7 @@ public class MVCipher {
 
       System.out.print("\nName of file to ");
 
+      // Update prompt based on user's choice
       if (isEncrypting) {
          System.out.print("encrypt");
       } else {
@@ -67,15 +72,19 @@ public class MVCipher {
       try (Scanner fileScanner = FileUtils.openToRead(inFileName);
             PrintWriter fileWriter = FileUtils.openToWrite(outputFileName)) {
 
+         // Loop through each line of the input file
          while (fileScanner.hasNext()) {
             String currentLine = fileScanner.nextLine();
             String encryptedDecryptedLine = "";
 
+            // Loop through each character of the current line
             for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
                char originalCharacter = currentLine.charAt(characterIndex);
                char processedCharacter = originalCharacter;
 
-               if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
+               // Check if the character is a lowercase letter
+               if (Character.isLetter(originalCharacter)
+                     && Character.isLowerCase(originalCharacter)) { // Check if the character is a lowercase letter
                   processedCharacter = this.getEncryptDecryptLowerCase(
                         originalCharacter, isEncrypting);
                } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
@@ -92,6 +101,7 @@ public class MVCipher {
 
       System.out.print("\nThe ");
 
+      // Update completion message based on user's choice
       if (isEncrypting) {
          System.out.print("encrypted ");
       } else {
@@ -113,10 +123,12 @@ public class MVCipher {
       boolean isValid = false;
       String keyInput = "";
 
+      // Loop until a valid key is entered
       while (!isValid) {
          keyInput = Prompt.getString("Please input a word to use as key (letters only)");
          keyInput = keyInput.toUpperCase();
 
+         // Check if the key is valid
          if (this.isKeyValid(keyInput)) {
             isValid = true;
          } else {
@@ -136,10 +148,12 @@ public class MVCipher {
     * @return True if the key is valid, false otherwise.
     */
    public boolean isKeyValid(String inputKey) {
+      // Check if the key meets the minimum length requirement
       if (inputKey.length() < KEY_MIN_LENGTH) {
          return false;
       } else {
          for (int charIndex = 0; charIndex < inputKey.length(); ++charIndex) {
+            // Check if the character is an uppercase letter
             if (inputKey.charAt(charIndex) < ASCII_UPPER_A
                   || inputKey.charAt(charIndex) > ASCII_UPPER_A + ALPHABET_SIZE - 1) {
                return false;
@@ -166,15 +180,18 @@ public class MVCipher {
       int shiftAmount = keyCharacter - ASCII_UPPER_A + 1;
       char outputChar;
 
+      // Encrypt the character
       if (isEncrypt) {
          outputChar = (char) (inputChar + shiftAmount);
 
+         // Wrap around the alphabet if necessary
          if (outputChar > 'z') {
             outputChar = (char) (outputChar - ALPHABET_SIZE);
          }
       } else {
          outputChar = (char) (inputChar - shiftAmount);
 
+         // Wrap around the alphabet if necessary
          if (outputChar < 'a') {
             outputChar = (char) (outputChar + ALPHABET_SIZE);
          }
@@ -199,15 +216,18 @@ public class MVCipher {
       int shiftAmount = keyCharacter - ASCII_UPPER_A + 1;
       char outputChar;
 
+      // Encrypt the character
       if (isEncrypt) {
          outputChar = (char) (inputChar + shiftAmount);
 
+         // Wrap around the alphabet if necessary
          if (outputChar > 'Z') {
             outputChar = (char) (outputChar - ALPHABET_SIZE);
          }
       } else {
          outputChar = (char) (inputChar - shiftAmount);
 
+         // Wrap around the alphabet if necessary
          if (outputChar < 'A') {
             outputChar = (char) (outputChar + ALPHABET_SIZE);
          }
