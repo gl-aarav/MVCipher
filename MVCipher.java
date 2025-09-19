@@ -1,4 +1,3 @@
-
 /**
  * This program implements an MV Cipher machine for encrypting and decrypting text files.
  *
@@ -13,17 +12,12 @@ import java.util.Scanner;
 public class MVCipher {
    private String key; // The encryption/decryption key
    private int index = 0; // Current index in the key for character shifting
-   private final boolean IS_DEBUG_MODE; // Flag for debug mode
-   private final int ALPHABET_SIZE; // Number of letters in the alphabet
-   private final int ASCII_UPPER_A; // ASCII value of 'A'
-   private final int KEY_MIN_LENGTH; // Minimum length for the key
+   private final int ALPHABET_SIZE = 26; // Number of letters in the alphabet
+   private final int ASCII_UPPER_A = 65; // ASCII value of 'A'
+   private final int KEY_MIN_LENGTH = 3; // Minimum length for the key
 
    public MVCipher() {
       key = ""; // Initialize key to an empty string
-      IS_DEBUG_MODE = false; // Set debug mode to false
-      ALPHABET_SIZE = 26; // There are 26 letters in the English alphabet
-      ASCII_UPPER_A = 65; // ASCII value for 'A'
-      KEY_MIN_LENGTH = 3; // Minimum key length is 3 characters
    }
 
    /**
@@ -43,11 +37,6 @@ public class MVCipher {
    public void runCipher() {
       System.out.println("\nWelcome to the MV Cipher machine!\n");
       this.key = this.getKeyInput();
-
-      // If debug mode is on, print the key
-      if (this.IS_DEBUG_MODE) {
-         System.out.println("The key is " + this.key);
-      }
 
       // Determine if the user wants to encrypt or decrypt
       boolean isEncrypting = true;
@@ -71,11 +60,20 @@ public class MVCipher {
 
       try (Scanner fileScanner = FileUtils.openToRead(inFileName);
             PrintWriter fileWriter = FileUtils.openToWrite(outputFileName)) {
+         if (fileScanner == null) {
+            throw new IllegalArgumentException("Input file not found: " + inFileName);
+         }
+         if (fileWriter == null) {
+            throw new IllegalArgumentException("Output file could not be created: " + outputFileName);
+         }
 
          // Loop through each line of the input file
          while (fileScanner.hasNext()) {
             String currentLine = fileScanner.nextLine();
-            String encryptedDecryptedLine = "";
+            StringBuilder encryptedDecryptedLine = new StringBuilder();
+
+            // If a line is empty, it will be written as an empty line in the output file.
+            // This behavior is intentional.
 
             // Loop through each character of the current line
             for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
@@ -83,20 +81,26 @@ public class MVCipher {
                char processedCharacter = originalCharacter;
 
                // Check if the character is a lowercase letter
-               if (Character.isLetter(originalCharacter)
-                     && Character.isLowerCase(originalCharacter)) { // Check if the character is a lowercase letter
-                  processedCharacter = this.getEncryptDecryptLowerCase(
-                        originalCharacter, isEncrypting);
+               if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
+                  processedCharacter = this.getEncryptDecryptLowerCase(originalCharacter, isEncrypting);
                } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
                   processedCharacter = this.getEncryptDecryptUpperCase(
                         originalCharacter, isEncrypting);
                }
 
-               encryptedDecryptedLine = encryptedDecryptedLine + processedCharacter;
+               encryptedDecryptedLine.append(processedCharacter);
             }
 
-            fileWriter.println(encryptedDecryptedLine);
+            fileWriter.println(encryptedDecryptedLine.toString());
          }
+      } catch (IllegalArgumentException e) {
+         System.out.println("ERROR: " + e.getMessage());
+      } catch (Exception e) {
+         System.out.println(
+               "ERROR: An issue occurred while processing the file. Please check the file paths and try again.");
+         System.out.println("ERROR: " + e.getMessage());
+      } finally {
+         this.index = 0; // Reset the key index after processing
       }
 
       System.out.print("\nThe ");
@@ -126,13 +130,19 @@ public class MVCipher {
       // Loop until a valid key is entered
       while (!isValid) {
          keyInput = Prompt.getString("Please input a word to use as key (letters only)");
-         keyInput = keyInput.toUpperCase();
 
-         // Check if the key is valid
+         // Check if the key contains only letters
+         if (!keyInput.matches("[a-zA-Z]+")) {
+            System.out.println("ERROR: Key must contain only letters.");
+            continue;
+         }
+
+         // Convert to uppercase and validate length
+         keyInput = keyInput.toUpperCase();
          if (this.isKeyValid(keyInput)) {
             isValid = true;
          } else {
-            System.out.println("ERROR: Key must be all letters and at least 3 characters long");
+            System.out.println("ERROR: Key must be at least " + KEY_MIN_LENGTH + " characters long.");
          }
       }
 
