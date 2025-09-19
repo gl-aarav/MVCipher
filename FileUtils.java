@@ -41,7 +41,7 @@ public class FileUtils {
 		try {
 			output = new PrintWriter(new File(fileName));
 		} catch (FileNotFoundException e) {
-			System.err.println("ERORR: Cannot open " + fileName +
+			System.err.println("ERROR: Cannot open " + fileName +
 					"for writing.");
 			System.exit(2);
 		}
