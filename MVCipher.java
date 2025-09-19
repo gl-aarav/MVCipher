@@ -11,13 +11,17 @@ import java.util.Scanner;
 
 public class MVCipher {
    private String key; // The encryption/decryption key
-   private int index = 0; // Current index in the key for character shifting
-   private final int ALPHABET_SIZE = 26; // Number of letters in the alphabet
-   private final int ASCII_UPPER_A = 65; // ASCII value of 'A'
-   private final int KEY_MIN_LENGTH = 3; // Minimum length for the key
+   private int index; // Current index in the key for character shifting
+   private final int ALPHABET_SIZE; // Number of letters in the alphabet
+   private final int ASCII_UPPER_A; // ASCII value of 'A'
+   private final int KEY_MIN_LENGTH; // Minimum length for the key
 
    public MVCipher() {
       key = ""; // Initialize key to an empty string
+      index = 0; // Initialize index to 0
+      ALPHABET_SIZE = 26; // Number of letters in the alphabet
+      ASCII_UPPER_A = 65; // ASCII value of 'A'
+      KEY_MIN_LENGTH = 3; // Minimum length for the key
    }
 
    /**
