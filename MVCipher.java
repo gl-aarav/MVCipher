@@ -6,8 +6,8 @@
  */
 
 // Import for writing to files
-import java.io.PrintWriter;
-import java.util.Scanner;
+import java.io.PrintWriter; // For writing to files
+import java.util.Scanner; // For reading from files
 
 public class MVCipher {
    private String key; // The encryption/decryption key
