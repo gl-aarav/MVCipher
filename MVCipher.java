@@ -77,34 +77,34 @@ public class MVCipher {
          return;
       }
 
-      // Loop through each line of the input file
-      while (fileScanner.hasNext()) {
-         String currentLine = fileScanner.nextLine();
-         StringBuilder encryptedDecryptedLine = new StringBuilder();
+      try (Scanner scanner = fileScanner; PrintWriter writer = fileWriter) {
+         // Loop through each line of the input file
+         while (scanner.hasNext()) {
+            String currentLine = scanner.nextLine();
+            StringBuilder encryptedDecryptedLine = new StringBuilder();
 
-         // If a line is empty, it will be written as an empty line in the output file.
-         // This behavior is intentional.
+            // If a line is empty, it will be written as an empty line in the output file.
+            // This behavior is intentional.
 
-         // Loop through each character of the current line
-         for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
-            char originalCharacter = currentLine.charAt(characterIndex);
-            char processedCharacter = originalCharacter;
+            // Loop through each character of the current line
+            for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
+               char originalCharacter = currentLine.charAt(characterIndex);
+               char processedCharacter = originalCharacter;
 
-            // Check if the character is a lowercase letter
-            if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
-               processedCharacter = this.getEncryptDecryptLowerCase(originalCharacter, isEncrypting);
-            } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
-               processedCharacter = this.getEncryptDecryptUpperCase(
-                     originalCharacter, isEncrypting);
+               // Check if the character is a lowercase letter
+               if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
+                  processedCharacter = this.getEncryptDecryptLowerCase(originalCharacter, isEncrypting);
+               } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
+                  processedCharacter = this.getEncryptDecryptUpperCase(
+                        originalCharacter, isEncrypting);
+               }
+
+               encryptedDecryptedLine.append(processedCharacter);
             }
 
-            encryptedDecryptedLine.append(processedCharacter);
+            writer.println(encryptedDecryptedLine.toString());
          }
-
-         fileWriter.println(encryptedDecryptedLine.toString());
       }
-      fileScanner.close();
-      fileWriter.close();
       this.index = 0; // Reset the key index after processing
 
       System.out.print("\nThe ");
