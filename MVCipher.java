@@ -62,50 +62,50 @@ public class MVCipher {
       String inFileName = Prompt.getString("");
       String outputFileName = Prompt.getString("Name of output file");
 
-      try (Scanner fileScanner = FileUtils.openToRead(inFileName);
-            PrintWriter fileWriter = FileUtils.openToWrite(outputFileName)) {
-         if (fileScanner == null) {
-            throw new IllegalArgumentException("Input file not found: " + inFileName);
-         }
-         if (fileWriter == null) {
-            throw new IllegalArgumentException("Output file could not be created: " + outputFileName);
-         }
+      Scanner fileScanner = FileUtils.openToRead(inFileName);
+      if (fileScanner == null) {
+         System.out.println("ERROR: Input file not found: " + inFileName);
+         this.index = 0; // Reset the key index even on error
+         return;
+      }
 
-         // Loop through each line of the input file
-         while (fileScanner.hasNext()) {
-            String currentLine = fileScanner.nextLine();
-            StringBuilder encryptedDecryptedLine = new StringBuilder();
+      PrintWriter fileWriter = FileUtils.openToWrite(outputFileName);
+      if (fileWriter == null) {
+         System.out.println("ERROR: Output file could not be created: " + outputFileName);
+         fileScanner.close(); // Close the scanner if writer can't be opened
+         this.index = 0; // Reset the key index even on error
+         return;
+      }
 
-            // If a line is empty, it will be written as an empty line in the output file.
-            // This behavior is intentional.
+      // Loop through each line of the input file
+      while (fileScanner.hasNext()) {
+         String currentLine = fileScanner.nextLine();
+         StringBuilder encryptedDecryptedLine = new StringBuilder();
 
-            // Loop through each character of the current line
-            for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
-               char originalCharacter = currentLine.charAt(characterIndex);
-               char processedCharacter = originalCharacter;
+         // If a line is empty, it will be written as an empty line in the output file.
+         // This behavior is intentional.
 
-               // Check if the character is a lowercase letter
-               if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
-                  processedCharacter = this.getEncryptDecryptLowerCase(originalCharacter, isEncrypting);
-               } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
-                  processedCharacter = this.getEncryptDecryptUpperCase(
-                        originalCharacter, isEncrypting);
-               }
+         // Loop through each character of the current line
+         for (int characterIndex = 0; characterIndex < currentLine.length(); ++characterIndex) {
+            char originalCharacter = currentLine.charAt(characterIndex);
+            char processedCharacter = originalCharacter;
 
-               encryptedDecryptedLine.append(processedCharacter);
+            // Check if the character is a lowercase letter
+            if (Character.isLetter(originalCharacter) && Character.isLowerCase(originalCharacter)) {
+               processedCharacter = this.getEncryptDecryptLowerCase(originalCharacter, isEncrypting);
+            } else if (Character.isLetter(originalCharacter) && Character.isUpperCase(originalCharacter)) {
+               processedCharacter = this.getEncryptDecryptUpperCase(
+                     originalCharacter, isEncrypting);
             }
 
-            fileWriter.println(encryptedDecryptedLine.toString());
+            encryptedDecryptedLine.append(processedCharacter);
          }
-      } catch (IllegalArgumentException e) {
-         System.out.println("ERROR: " + e.getMessage());
-      } catch (Exception e) {
-         System.out.println(
-               "ERROR: An issue occurred while processing the file. Please check the file paths and try again.");
-         System.out.println("ERROR: " + e.getMessage());
-      } finally {
-         this.index = 0; // Reset the key index after processing
+
+         fileWriter.println(encryptedDecryptedLine.toString());
       }
+      fileScanner.close();
+      fileWriter.close();
+      this.index = 0; // Reset the key index after processing
 
       System.out.print("\nThe ");
 
